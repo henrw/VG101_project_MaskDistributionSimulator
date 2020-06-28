@@ -1,25 +1,30 @@
 # VG101_project_MaskDistributionSimulator
 ## 1.Timetable
 Now - July 1:  
-  i) pre-study c++/OpenGL (try to figure out how to do the parts)  
-  ii) create more details about the program  
+- pre-study c++/OpenGL (try to figure out how to implement our parts)  
+- create more details about the program  
+
 June 1 - July 5:  
-  i) set up data structure  
-  ii) pre-study c++/OpenGL  
+- set up data structure  
+- pre-study c++/OpenGL  
+
 July 6 - July 12:  
-  i) write mask distribution function  
-  ii) write infected condition function  
-  iii) plot the map + start to write animation  
+- write mask distribution function  
+- write infected condition function  
+- plot the map + start to write animation  
+
 July 13 - July 19  
 **July 18 Progress report due**  
-  i) start to combine the functions in “main”  
-  ii) finish animation  
-  iii) write report  
+- start to combine the functions in “main”  
+- finish animation  
+- write report  
+
 July 20 - July 26  
-  i) wrap things up  
-  ii) user interface beautification  
+- wrap things up  
+- user interface beautification  
+
 July 27 - **August 3 (Due Day)**  
-  i) enhancement  
+- enhancement  
 ## 2.Task Assignment  
 - Jeongsoo Pang:  
   - infected condition function (model)  
