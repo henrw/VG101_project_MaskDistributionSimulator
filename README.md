@@ -47,8 +47,8 @@ Overall, we will simulate the arrangement and distribution of masks among differ
 - [x] A map of a number (input) of cities will be generated and a legend of key information of different cities will
 be provided next to the map. The animation of trucks over time will be shown on the map.
 - [x] A data structure will be designed to store the information of cities on.
-- After the initialization, the program will start simulate the mask redistribution and the situation of infection
-of COVID-19 over time, until either the infected number gets down to 0 or more than 50% people are infected
+- [x] After the initialization, the program will start simulate the mask redistribution and the situation of infection
+of COVID-19 over time, until either the infected number gets down to 0 or more than ~~50%~~30000 people are infected
 in a city.
 - [x] Functions of the relation between the number of masks and the infected cases, how many masks certain
 cities should give away to another city at a certain time will be developed.
