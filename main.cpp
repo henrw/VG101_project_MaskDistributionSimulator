@@ -1,28 +1,48 @@
-#include <iostream>
+#define _CRT_SECURE_NO_WARNINGS
+#include <Windows.h>
+#include "GL/glut.h"
+
+//#include <ctime>
+//#include <iostream>
 #include "mask_simulation.h"
-#include <windows.h>
-#include <math.h>
-using namespace std;
 
-int main()
+#pragma comment(linker, "/subsystem:\"windows\" /entry:\"mainCRTStartup\"")
+
+int cnt = 0;
+
+int half_screen_width = screen_width / 2;
+int half_screen_height = screen_height / 2;
+
+//the ratio of the height and the wide
+float radio = screen_width / screen_height;
+
+bool is_translating = false;
+bool is_hour_changed = false;
+
+bool is_inputed_values = false;
+
+//the maximum day number that the function plotting shows
+int history_inf_cache_count = 220;
+
+int current_hour = 0;
+int pre_hour = -1;
+
+//the period that the infected people be updated
+int inf_refresh_cycle = 60 * 5;
+int inf_pre_cycle_pos = 0;
+bool need_refresh_inf = false;
+
+int main(int argc, char *argv[])
 {
-    _SYS *sys1;
-    sys1 = (_SYS *)malloc(sizeof(_SYS));
-    initialization(sys1);
-    float delta_t=0.01;
-    float total_t=0;
-    while(total_t<24*2){//30 days
-        sir_renew(sys1,delta_t);
-        parameter_renew(sys1);
-        mask_require(sys1);
-        mask_change(sys1,(int)(total_t*1/delta_t)%(int)(12*1/delta_t),delta_t);//transport every 12 hours
-        total_t+=delta_t;
-
-
-        Sleep(5);
-
-    if((int)(total_t*1/delta_t)%(int)(1/delta_t)==0)
-        cout<<"hour"<<(int)((total_t*1/delta_t)/(1/delta_t))<<" "<<round(sys1->city[1]->sus_num)<<" "<<round(sys1->city[1]->inf_num)<<" "<<sys1->city[1]->total_num-round(sys1->city[1]->inf_num)-round(sys1->city[1]->sus_num)<<"\n";
-
-    }
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_MULTISAMPLE);
+    glutInitWindowPosition(50, 50);
+    glutInitWindowSize(screen_width, screen_height);
+    glutCreateWindow("Mask Distribution Simulator");
+    glutDisplayFunc(Show);
+    glutMouseFunc(MouseFunc);
+    glutKeyboardFunc(KeyboardFuncInputValues);
+    glutIdleFunc(IdleFunc);
+    glutMainLoop();
+    return 0;
 }
