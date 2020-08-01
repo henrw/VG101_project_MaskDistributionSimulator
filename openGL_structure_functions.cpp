@@ -4,6 +4,8 @@
 #include <iomanip>
 
 //testing
+
+extern float threshold_infection_num;
 extern int hours_per_trans;
 
 extern bool is_hour_changed;
@@ -34,7 +36,7 @@ void RefreshDatas()
     //if it it transmission time
     is_translating = current_hour!=0 && sub_virtual_time < 3600;
 
-    float delta = current_virtual_time - pre_virtual_time;
+    float delta = (float) current_virtual_time - pre_virtual_time;
     //time interval->hours
     auto delta_t = delta / 3600.0f;
 
@@ -61,9 +63,9 @@ void RefreshDatas()
 
             if (city.pre_hour_mask_num == -1)
             {
-                city.pre_hour_mask_num = city.cur_msk_num;
+                city.pre_hour_mask_num = (int) city.cur_msk_num;
             }
-            city.current_hour_mask_num = city.cur_msk_num;
+            city.current_hour_mask_num = (int) city.cur_msk_num;
         }
 
         if (need_refresh_inf)
@@ -95,26 +97,61 @@ void Show()
     glRectf(ParseOpenGLX(700), ParseOpenGLY(25), ParseOpenGLX(1070), ParseOpenGLY(490));
 
 
-
-    if (is_inputed_values)
+    if(end_check()==-2)
     {
-        pre_virtual_time = current_virtual_time;
-        ComputeVirtualTime();
-        RefreshDatas();
-        ShowCities();
-        DrawCityDatas();
-        ShowDate();
-        ShowDialog();
+        if (is_inputed_values)
+        {
+            pre_virtual_time = current_virtual_time;
+            ComputeVirtualTime();
+            RefreshDatas();
+            ShowCities();
+            DrawCityDatas();
+            ShowDate();
+            ShowDialog();
+            end_check();
+        }
+        else
+        {
+            DrawInputUI();
+        }
+    }
+    else if(end_check()==-1)
+    {
+        DrawString("There is no infected person in Hubei Province. The simulation ended...",\
+                50,70,GLUT_BITMAP_HELVETICA_18);
     }
     else
     {
-        DrawInputUI();
+        char end_str[100];
+        sprintf(end_str,"More than 30000 citizens are infected in %s...",city_infos[end_check()].name.c_str());
+        DrawString(end_str,50,70,GLUT_BITMAP_HELVETICA_18);
+        DrawString("The simulation ends...",50,100,GLUT_BITMAP_HELVETICA_18);
     }
-
     glutSwapBuffers();
 }
 
 void IdleFunc()
 {
     glutPostRedisplay();
+}
+
+int end_check()
+{
+    for(int i=0;i<city_count;++i){
+        if(city_infos[i].inf_num>=threshold_infection_num){
+            return i;
+        }
+    }
+
+    bool is_win=true;
+    for (int i=0;i<city_count;++i){
+        if(city_infos[i].inf_num>=1){
+            is_win=false;
+        }
+    }
+    if(is_win){
+        return -1;
+    }
+
+    return -2;
 }

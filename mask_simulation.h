@@ -154,7 +154,7 @@ void mask_require(_SYS *sys1);
 //Changes: sys1->city[ALL]->eff_rt (effective contact rate) & rec_rt (recovery rate) updated
 void parameter_renew(_SYS *sys1);
 
-float eff_rt_calculator(float sus_num,float rec_num,float cur_msk_num,float req_msk_num, float radius);
+float eff_rt_calculator(float sus_num,float rec_num,float cur_msk_num, float radius);
 
 float rec_rt_calculator(float hspt_num,float inf_num);
 
@@ -249,5 +249,7 @@ void RefreshDatas();
 void Show();
 
 void IdleFunc();
+
+int end_check();
 
 #endif //CLION_MASK_SIMULATION_H

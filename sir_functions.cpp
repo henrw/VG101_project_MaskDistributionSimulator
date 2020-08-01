@@ -65,18 +65,20 @@ void parameter_renew(_SYS *sys1)
 {
     for (int i = 0; i < sys1->city_num; ++i)
     {
-        sys1->city[i]->eff_rt = eff_rt_calculator(sys1->city[i]->sus_num,sys1->city[i]->rec_num,sys1->city[i]->cur_msk_num,sys1->city[i]->req_msk_num,(float)sys1->city[i]->R*real_scale);
+        sys1->city[i]->eff_rt = eff_rt_calculator(sys1->city[i]->sus_num,sys1->city[i]->rec_num,sys1->city[i]->cur_msk_num,(float)sys1->city[i]->R*real_scale);
         sys1->city[i]->rec_rt = rec_rt_calculator(sys1->city[i]->hspt_num,sys1->city[i]->inf_num);
     }
+//    cout<<sys1->city[9]->eff_rt<<endl;
 }
 
-float eff_rt_calculator(float sus_num,float rec_num,float cur_msk_num,float req_msk_num, float radius){
+float eff_rt_calculator(float sus_num,float rec_num,float cur_msk_num, float radius){
     float eff_rt=0;
-    if(cur_msk_num<sus_num+rec_num){
-        float total_area=pow(radius,2)*PI;
-        float unit_area=pow(1,2)*PI;
-        eff_rt=1/(total_area*(sus_num+rec_num))
-               *((sus_num+rec_num)-1-total_area/unit_area>0?total_area/unit_area*(total_area+unit_area)/2+((sus_num+rec_num)-1-total_area/unit_area)*total_area:((sus_num+rec_num)/2)*((sus_num+rec_num)-1)*unit_area);
+    if(cur_msk_num<sus_num){
+        float total_area=(float) pow(radius,2)*PI;
+        float unit_area=(float) pow(1,2)*PI;
+        eff_rt=1/(total_area*(sus_num-cur_msk_num))*((sus_num-cur_msk_num)-1-total_area/unit_area>0?\
+                 total_area/unit_area*(total_area+unit_area)/2+((sus_num-cur_msk_num)-1-total_area/unit_area)*total_area\
+                 :((sus_num-cur_msk_num)/2)*((sus_num-cur_msk_num)-1)*unit_area);
     }
     //        Equivalently
 //        for(int i=1;i<=(int)(sus_num-mask_num);++i){
@@ -95,11 +97,11 @@ float rec_rt_calculator(float hspt_num,float inf_num)
         if(delta_time<10*24*3600)
         {
             //The first 10 days have lower recover rate
-            return (float)(delta_time)/(10*24*3600) / (average_cure_day * 24);
+            rec_rt = (float)(delta_time)/(10*24*3600) / (average_cure_day * 24);
 
         }
         else{
-            return 1 / (average_cure_day * 24);
+            rec_rt = 1 / (average_cure_day * 24);
         }
 
     }
@@ -107,14 +109,15 @@ float rec_rt_calculator(float hspt_num,float inf_num)
         if(delta_time<10*24*3600)
         {
             //The first 10 days have lower recover rate
-            return (float)(delta_time)/(10*24*3600) / (average_cure_day * 24 + average_cure_day * 24 * (inf_num - hspt_capacity * hspt_num) / inf_num);
+            rec_rt = (float)(delta_time)/(10*24*3600) / (average_cure_day * 24 + average_cure_day * 24 * (inf_num - hspt_capacity * hspt_num) / inf_num);
 
         }
         else{
-            return 1 / (average_cure_day * 24 + average_cure_day * 24 * (1 - exp(-(inf_num - hspt_capacity * hspt_num) / hspt_capacity * hspt_num)));
+            rec_rt = 1 / (average_cure_day * 24 + average_cure_day * 24 * (1 - exp(-(inf_num - hspt_capacity * hspt_num) / hspt_capacity * hspt_num)));
         }
     }
 
+    return rec_rt;
 
 }
 
@@ -133,9 +136,10 @@ void sir_renew(_SYS *sys1, float delta_t)
                     delta_t;
         delta_rec = (sys1->city[i]->rec_rt * sys1->city[i]->inf_num) *
                     delta_t;
-        sys1->city[i]->sus_num += delta_sus;
-        sys1->city[i]->inf_num += delta_inf;
-        sys1->city[i]->rec_num += delta_rec;
+        sys1->city[i]->sus_num = max((float)0,sys1->city[i]->sus_num+delta_sus);
+        sys1->city[i]->inf_num = max((float)0,sys1->city[i]->inf_num+delta_inf);
+        sys1->city[i]->rec_num = max((float)0,sys1->city[i]->rec_num+delta_rec);
+
     }
 }
 
@@ -144,13 +148,12 @@ void mask_change(_SYS *sys1, int isTransport, float delta_t)
 
     for (int i = 0; i < sys1->city_num; ++i)
     {
-        sys1->city[i]->cur_msk_num += sys1->city[i]->prod_rt * delta_t / (float)24;
+        sys1->city[i]->cur_msk_num = max((float)0,sys1->city[i]->cur_msk_num+sys1->city[i]->prod_rt * delta_t / (float)24);
     }
 
     for (int i = 0; i < sys1->city_num; ++i)
     {
-        sys1->city[i]->cur_msk_num -=  sys1->city[i]->req_msk_num* delta_t / (float)24;
-        sys1->city[i]->cur_msk_num=max(sys1->city[i]->cur_msk_num,(float)0);
+        sys1->city[i]->cur_msk_num = max((float)0,sys1->city[i]->cur_msk_num - sys1->city[i]->req_msk_num* delta_t / (float)24);
     }
 
     if (isTransport == 0)
@@ -223,7 +226,6 @@ int find_order(int* worst_order,_SYS *sys1){
                             worst_rate=(sys1->city[i]->eff_rt * sys1->city[j]->sus_num * sys1->city[j]->inf_num /
                                         sys1->city[i]->total_num - sys1->city[j]->rec_rt * sys1->city[j]->inf_num);
                             worst_order[i]=j;
-
                         }
                     }
                 }

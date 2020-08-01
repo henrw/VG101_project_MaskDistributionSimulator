@@ -5,9 +5,8 @@
 #include <string>
 #include <iostream>
 
-extern int city_num;
-extern string transported_num_str[13];
 
+extern float threshold_infection_num;
 extern bool is_translating;
 std::string month[12] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"};
 extern float PI;
@@ -207,7 +206,7 @@ void DrawRoad(int start_index, int end_index, int min_diff_val, int max_diff_val
         int farest_y_delta = normal_delta_y * (current_pos + tag_length + half_tag_length);
         int current_length = sqrt(farest_x_delta * farest_x_delta + farest_y_delta * farest_y_delta);
 
-        //drawing small arrow repeatdely until reaching the ending point
+        //drawing small arrow repeatedly until reaching the ending point
         if (current_length < length - 10)
         {
             glColor3f(0.9f, 0.9f, 0.0f);
@@ -365,7 +364,7 @@ void ShowDialog()
         for (int i = 0; i < history_inf_cache_count && i < city_info.history_inf_nums.size(); i++)
         {
             //            int y = y_origin - city_info.history_inf_nums[i];
-            int y = max((float)y_origin - (float)(y_origin - y_end - 5) / 50000 * city_info.history_inf_nums[i],\
+            int y = max((float)y_origin - (float)(y_origin - y_end - 5) / threshold_infection_num * city_info.history_inf_nums[i],\
                         (float)y_origin - (float)(y_origin - y_end - 5));
             y = max(y, y_end);
             glVertex2f(ParseOpenGLX(i + x_origin), ParseOpenGLY(y));
@@ -382,7 +381,7 @@ void ShowDialog()
     }
 }
 
-//how time
+//show the virtual time
 void ShowDate()
 {
     {

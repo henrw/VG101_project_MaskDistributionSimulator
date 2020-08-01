@@ -3,17 +3,17 @@
 
 
 extern time_t delta_time;
-//计算虚拟时间
+//Calculate the virtual time
 void ComputeVirtualTime()
 {
     time_t tnow;
     time(&tnow);
-    int real = 1;
+    int real_interval = 1;
     int real_delta_time = tnow - start_time;
-    real_delta_time = real_delta_time / real * real;
+    real_delta_time = real_delta_time / real_interval * real_interval;
 
-    //按照 real 秒等于1小时换算从程序启动到当前的时间
-    delta_time = (real_delta_time) * (3600 / real);
+    //A real_interval is equivalent to 1 virtual hour
+    delta_time = (real_delta_time) * (3600 / real_interval);
     current_virtual_time = virtual_start_time + delta_time;
 }
 
