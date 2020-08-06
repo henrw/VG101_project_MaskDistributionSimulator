@@ -16,7 +16,8 @@ int half_screen_height = screen_height / 2;
 //the ratio of the height and the wide
 float radio = screen_width / screen_height;
 
-bool is_translating = false;
+bool is_transport1 = false;
+bool is_transport2 = false;
 bool is_hour_changed = false;
 
 bool is_inputed_values = false;

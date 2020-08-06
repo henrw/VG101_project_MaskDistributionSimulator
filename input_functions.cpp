@@ -1,8 +1,9 @@
 #include "GL/glut.h"
 #include "mask_simulation.h"
+#include <cmath>
 
 //Index of the selection of cities during input.
-//0 refers to unselected; 1 refers to the major city selected; 2 refers to other cities selected.
+//0 refers to unselected; 1 refers to the major city selected; 2 refers to other cities selected; 3 refers to infected threshold selected.
 int selected_city_input = 0;
 
 void AddString(std::string &str, int &val, unsigned char key)
@@ -10,7 +11,12 @@ void AddString(std::string &str, int &val, unsigned char key)
     str += key;
     val = atoi(str.c_str());
     char temp[256];
-    _itoa(val, temp, 10);
+#ifdef WINDOWS
+	_itoa_s(val, temp, 10);
+#else
+	_itoa(val, temp, 10);
+#endif // WINDOWS
+
     str = temp;
 }
 
@@ -39,6 +45,9 @@ void KeyboardFuncInputValues(unsigned char key, int x, int y)
             case 2:
                 AddString(other_city_string, other_city_prod_rt, key);
                 break;
+			case 3:
+				AddString(threshold_infection_percent_string, threshold_infection_percent, key);
+				break;
             default:
                 break;
         }
@@ -54,7 +63,10 @@ void KeyboardFuncInputValues(unsigned char key, int x, int y)
                 break;
             case 2:
                 RemoveStringOneChar(other_city_string, other_city_prod_rt);
-                break;
+				break;
+			case 3:
+				RemoveStringOneChar(threshold_infection_percent_string, threshold_infection_percent);
+				break;
             default:
                 break;
         }
@@ -66,33 +78,69 @@ void MouseFuncInputValues(int button, int state, int x, int y)
 {
     if (button == GLUT_LEFT_BUTTON && state == GLUT_UP)
     {
-        if (x >= major_city_input_x1 && x <= major_city_input_x2 && y >= major_city_input_y1 && y <= major_city_input_y2)
+        if (x >= major_city_input_x1 && x <= major_city_input_x2 && y >= major_city_input_y1 + input_ui_base_y && y <= major_city_input_y2 + input_ui_base_y)
         {
             selected_city_input = 1;
             current_major_input_color = select_input_color;
-            current_other_input_color = normal_input_color;
+			current_other_input_color = normal_input_color;
+			threshold_infection_input_color = normal_input_color;
         }
-        else if (x >= other_city_input_x1 && x <= other_city_input_x2 && y >= other_city_input_y1 && y <= other_city_input_y2)
+        else if (x >= other_city_input_x1 && x <= other_city_input_x2 && y >= other_city_input_y1 + input_ui_base_y && y <= other_city_input_y2 + input_ui_base_y)
         {
             selected_city_input = 2;
             current_major_input_color = normal_input_color;
-            current_other_input_color = select_input_color;
+			current_other_input_color = select_input_color;
+			threshold_infection_input_color = normal_input_color;
         }
+		else if (x >= threshold_infection_percent_input_x1 && x <= threshold_infection_percent_input_x2 && y >= threshold_infection_percent_input_y1 + input_ui_base_y && y <= threshold_infection_percent_input_y2 + input_ui_base_y)
+		{
+			selected_city_input = 3;
+			current_major_input_color = normal_input_color;
+			current_other_input_color = normal_input_color;
+			threshold_infection_input_color = select_input_color;
+		}
         else
         {
-            selected_city_input = 0;
+            selected_city_input = 4;
             current_major_input_color = normal_input_color;
             current_other_input_color = normal_input_color;
+			threshold_infection_input_color = normal_input_color;
         }
 
         //The initialization will be done if "OK" button is clicked.
-        if (x >= ok_button_x1 && x <= ok_button_x2 && y >= ok_button_y1 && y <= ok_button_y2)
+        if (x >= ok_button_x1 && x <= ok_button_x2 && y >= ok_button_y1 + input_ui_base_y && y <= ok_button_y2 + input_ui_base_y)
         {
             InitializeTime();
-            InitializeCityDatas();
+			InitializeCityDatas();
+			InitializeOutlineDatas();
             is_inputed_values = true;
         }
     }
+}
+
+float TriangleArea(std::pair<int, int> p1, std::pair<int, int> p2, std::pair<int, int> p3)//���׹�ʽ
+{
+	float AB, BC, AC, P;
+	AB = sqrt(pow(p2.first - p1.first, 2) + pow(p2.second - p1.second, 2));
+	AC = sqrt(pow(p3.first - p1.first, 2) + pow(p3.second - p1.second, 2));
+	BC = sqrt(pow(p3.first - p2.first, 2) + pow(p3.second - p2.second, 2));
+	P = (AB + AC + BC) / 2;
+
+	return sqrt(P*(P - AB)*(P - AC)*(P - BC));
+}
+
+bool IsInTriangle(std::pair<int, int> A, std::pair<int, int> B, std::pair<int, int> C, std::pair<int, int> D)
+{
+	float S1, S2, S3, Ssum;
+	S1 = TriangleArea(A, B, D);
+	S2 = TriangleArea(A, C, D);
+	S3 = TriangleArea(B, C, D);
+	Ssum = TriangleArea(A, B, C);
+
+	if (0.1 > fabs(Ssum - S1 - S2 - S3))//ע�����ֵ
+		return true;
+	else
+		return false;
 }
 
 //The function for mouse actions in the mode of showing dialog
@@ -104,20 +152,39 @@ void MouseFuncDialog(int button, int state, int x, int y)
         {
             for (int i = 0; i < city_count; i++)
             {
-                //determining whether the cursor is in the circle (city)
-                int delta_x = city_infos[i].center_x - x;
-                int delta_y = (int) ((float)(city_infos[i].center_y - y) / city_infos[i].y_scale);
-                int distance_diff = delta_x * delta_x + delta_y * delta_y - city_infos[i].R * city_infos[i].R;
-                //if within the circle (judging from the distance between the cursor and the center of city)
-                if (distance_diff < 0)
-                {
-                    dialog_city_index = i;
-                }
+					const auto& city = city_infos[i];
+					for (int triangle_i = 0 ; triangle_i < city.city_outline_index.size() ; triangle_i += 3)
+					{
+						auto index_0 = city.city_outline_index[triangle_i];
+						auto index_1 = city.city_outline_index[triangle_i + 1];
+						auto index_2 = city.city_outline_index[triangle_i + 2];
+						if (IsInTriangle(city.city_outline[index_0], city.city_outline[index_1], city.city_outline[index_2], std::make_pair(x, y)))
+						{
+							dialog_city_index = i;
+							return;
+						}
+					}
             }
         }
         else
         {
             dialog_city_index = -1;
+        }
+    }
+}
+
+void MouseFuncInfo(int button, int state, int x, int y)
+{
+    if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
+    {
+        if(is_info_shown==0){
+            if(pow(x-info_x,2)+pow(y-info_y,2)<info_R*info_R){
+                is_info_shown=1;
+            }
+        }
+        else
+        {
+            is_info_shown=0;
         }
     }
 }
@@ -133,4 +200,5 @@ void MouseFunc(int button, int state, int x, int y)
     {
         MouseFuncInputValues(button, state, x, y);
     }
+    MouseFuncInfo(button, state, x, y);
 }
