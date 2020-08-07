@@ -107,29 +107,30 @@ void DrawInputUI()
     DrawInfoLogo();
 
 	auto base_y = input_ui_base_y;
-    DrawString("Mask Distribution Simulator for Hubei Province during COVID-19", 280, 70, GLUT_BITMAP_HELVETICA_18);
-    DrawString("Please enter the mask production capacity (pieces per day) of:", 290, 170 + base_y, GLUT_BITMAP_HELVETICA_18);
-    DrawString("major industrial city*:", 290, 210 + base_y, GLUT_BITMAP_HELVETICA_18);
-    DrawString("(Xiantao)", 290, 230 + base_y, GLUT_BITMAP_HELVETICA_18);
-	DrawString("other cities:", 290, 290 + base_y, GLUT_BITMAP_HELVETICA_18);
-	DrawString("tolerable infection ratio:", 290, 373 + base_y);
-    DrawString("X 1/10000", 660, 370 + base_y,GLUT_BITMAP_HELVETICA_12);
-    DrawString("Example: input \"10\" to set that the simulation ends when the infection ratio reaches 0.001 in any one of the cities", 290, 420 + base_y,GLUT_BITMAP_HELVETICA_12);
-    DrawString("             scale for reference: for Wuhan,9785392(population) * 10 * 1/10000 = 9785", 290, 440 + base_y,GLUT_BITMAP_HELVETICA_12);
+    DrawString("Mask Distribution Simulator for Hubei Province during COVID-19", 270, 70, GLUT_BITMAP_HELVETICA_18);
+    DrawString("Please enter the mask production capacity (number of masks per day) of:", 260, 190 + base_y, GLUT_BITMAP_HELVETICA_18);
+    DrawString("Major industrial city*:", 320, 230 + base_y, GLUT_BITMAP_HELVETICA_18);
+    DrawString("(Xiantao)", 320, 250 + base_y, GLUT_BITMAP_HELVETICA_18);
+	DrawString("Other cities:", 320, 290 + base_y, GLUT_BITMAP_HELVETICA_18);
+    DrawString("As well as",260, 340 + base_y, GLUT_BITMAP_HELVETICA_18);
+	DrawString("Tolerable infection ratio:", 320, 373 + base_y);
+    DrawString("X 1/10000", 690, 372 + base_y,GLUT_BITMAP_HELVETICA_12);
+    DrawString("Example: input \"10\" to set that the simulation ends when the infection ratio reaches 0.001 in any one of the cities", 260, 420 + base_y,GLUT_BITMAP_HELVETICA_12);
+    DrawString("Scale for reference: for Wuhan, 9785392 (population) * 10 * 1/10000 = 9785", 260, 440 + base_y,GLUT_BITMAP_HELVETICA_12);
     glColor3f(current_major_input_color, current_major_input_color, current_major_input_color);
     //main city
     glRectf(ParseOpenGLX(major_city_input_x1), ParseOpenGLY(major_city_input_y1 + base_y), ParseOpenGLX(major_city_input_x2), ParseOpenGLY(major_city_input_y2 + base_y));
-    DrawString(major_city_string.c_str(), 570, 215 + base_y, GLUT_BITMAP_HELVETICA_18);
+    DrawString(major_city_string.c_str(), 600, 235 + base_y, GLUT_BITMAP_HELVETICA_18);
 
     glColor3f(current_other_input_color, current_other_input_color, current_other_input_color);
     //other cities
     glRectf(ParseOpenGLX(other_city_input_x1), ParseOpenGLY(other_city_input_y1 + base_y), ParseOpenGLX(other_city_input_x2), ParseOpenGLY(other_city_input_y2 + base_y));
-    DrawString(other_city_string.c_str(), 570, 295 + base_y, GLUT_BITMAP_HELVETICA_18);
+    DrawString(other_city_string.c_str(), 600, 295 + base_y, GLUT_BITMAP_HELVETICA_18);
 
 	glColor3f(threshold_infection_input_color, threshold_infection_input_color, threshold_infection_input_color);
 	//threshold
 	glRectf(ParseOpenGLX(threshold_infection_percent_input_x1), ParseOpenGLY(threshold_infection_percent_input_y1 + base_y), ParseOpenGLX(threshold_infection_percent_input_x2), ParseOpenGLY(threshold_infection_percent_input_y2 + base_y));
-	DrawString(threshold_infection_percent_string.c_str(), 550, 375 + base_y, GLUT_BITMAP_HELVETICA_18);
+	DrawString(threshold_infection_percent_string.c_str(), 580, 375 + base_y, GLUT_BITMAP_HELVETICA_18);
 
     glColor3f(0.5, 0.5, 0.5);
     glRectf(ParseOpenGLX(ok_button_x1), ParseOpenGLY(ok_button_y1 + base_y), ParseOpenGLX(ok_button_x2), ParseOpenGLY(ok_button_y2 + base_y));

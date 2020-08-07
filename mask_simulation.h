@@ -116,19 +116,19 @@ const int major_city_index = 8;
 
 const int input_ui_base_y = -30;
 
-const int major_city_input_x1 = 500;
-const int major_city_input_y1 = 190;
-const int major_city_input_x2 = 730;
-const int major_city_input_y2 = 230;
+const int major_city_input_x1 = 530;
+const int major_city_input_y1 = 210;
+const int major_city_input_x2 = 760;
+const int major_city_input_y2 = 250;
 
-const int other_city_input_x1 = 500;
+const int other_city_input_x1 = 530;
 const int other_city_input_y1 = 270;
-const int other_city_input_x2 = 730;
+const int other_city_input_x2 = 760;
 const int other_city_input_y2 = 310;
 
-const int threshold_infection_percent_input_x1 = 500;
+const int threshold_infection_percent_input_x1 = 530;
 const int threshold_infection_percent_input_y1 = 350;
-const int threshold_infection_percent_input_x2 = 630;
+const int threshold_infection_percent_input_x2 = 660;
 const int threshold_infection_percent_input_y2 = 390;
 
 const int ok_button_x1 = 630;
