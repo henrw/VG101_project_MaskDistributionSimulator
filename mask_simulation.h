@@ -128,7 +128,20 @@ const int other_city_input_y2 = 325;
 const int ok_button_x1 = 580;
 const int ok_button_y1 = 350;
 const int ok_button_x2 = 800;
+<<<<<<< Updated upstream
 const int ok_button_y2 = 420;
+=======
+const int ok_button_y2 = 500;
+
+const int info_x = 40;
+const int info_y = 75;
+const int info_R = 15;
+
+const int info_start_x=215;
+const int info_start_y=50;
+const int info_left_space=20;
+const int info_indent=10;
+>>>>>>> Stashed changes
 
 extern std::string major_city_string;
 extern std::string other_city_string;
@@ -186,6 +199,49 @@ void DrawString2(std::string str, int x_offset, int y_offset, float angle, void 
 
 void DrawInputUI();
 
+<<<<<<< Updated upstream
+=======
+//Draw small triangle for major city
+void DrawSmallTriangle(int x_offset, int y_offset);
+//small square in the city
+void DrawSmallSquare(int x_offset, int y_offset);
+
+//circle (for info)
+void DrawInfoLogo();
+
+//the road
+void DrawRoad(int start_index, int end_index, int min_diff_val, int max_diff_val, int mode);
+
+//drawing
+void ShowCities();
+
+//show the data
+void DrawCityDatas();
+
+//city's dialog
+void ShowDialog();
+
+void ShowInfo();
+
+//how time
+void ShowDate();
+
+//the digit in the road
+void DrawRoadText(int index,int mode);
+
+
+/*OpenGL structural functions*/
+
+//refresh data
+void RefreshDatas();
+
+void Show();
+
+void IdleFunc();
+
+int end_check();
+
+>>>>>>> Stashed changes
 //Time initialization functions
 
 //计算虚拟时间
@@ -197,7 +253,14 @@ void InitializeTime();
 //initialize city data
 void InitializeCityDatas();
 
+<<<<<<< Updated upstream
 //Input functions
+=======
+//initialize outline data
+void InitializeOutlineDatas();
+
+/*Input functions*/
+>>>>>>> Stashed changes
 
 void AddString(std::string &str, int &val, unsigned char key);
 
@@ -244,12 +307,5 @@ void DrawRoadText(int index,int diff);
 
 //refresh data
 void RefreshDatas();
-
-//MAIN FUNCTION OF DRAWING
-void Show();
-
-void IdleFunc();
-
-int end_check();
 
 #endif //CLION_MASK_SIMULATION_H
